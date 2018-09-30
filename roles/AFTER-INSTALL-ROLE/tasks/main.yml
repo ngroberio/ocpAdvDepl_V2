@@ -78,7 +78,7 @@
 
 - name: CREATE ALL PVS
   import_role:
-    name: OPNESHIFT-APPLIER
+    name: OPENSHIFT-APPLIER
   when: "inventory_hostname == 'localhost'"
 
 - name: CHECK ALL PVS

@@ -16,7 +16,7 @@
 
 - name: CREATE PROJECTS, GROUPS, AND USERS
   import_role:
-    name: OPNESHIFT-APPLIER
+    name: OPENSHIFT-APPLIER
   when: "inventory_hostname == 'localhost'"
 
 - name: CREATE ALL USERS

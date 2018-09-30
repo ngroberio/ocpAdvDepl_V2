@@ -17,7 +17,7 @@
 
 - name: DEPLOY THE SMOKE TEST APPLICATION USING ANSIBLE APPLIER
   import_role:
-    name: OPNESHIFT-APPLIER
+    name: OPENSHIFT-APPLIER
   when: "inventory_hostname == 'localhost'"
 
 - name: TEST SMOKE TEST URL
