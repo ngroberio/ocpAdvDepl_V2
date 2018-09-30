@@ -28,7 +28,7 @@
   debug:
     msg: "{{ url.stdout }}"
 
-- name: "CHECK IF POD IS ALIVE"
+- name: CHECK IF POD IS ALIVE
   uri:
     url: "{{ url.stdout }}"
     status_code: 200
