@@ -1,0 +1,46 @@
+---
+- name: INITIATE HOST TEMPLATE FILE WITH GUID PARAM
+  hosts: localhost
+  roles:
+    - HOSTS-TEMPLATE
+
+- name: PREPARE ENVIRONMENT
+  hosts: all
+  roles:
+    - PREPARE-ENV-ROLE
+
+- name: IMPORT PREREQUISITES
+  import_playbook: "/usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml"
+
+- name: DEPLOY OCP CLUSTER PLABOOK
+  import_playbook: "/usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml"
+
+- name: AFTER INSTALLATION
+  hosts: all,localhost
+  roles:
+    - AFTER-INSTALL-ROLE
+
+- name: SMOKE TEST ROLE
+  hosts: localhost
+  roles:
+    - SMOKE-TEST-ROLE
+
+- name: DEPLOY JNEKINS TO CICD PROJECT
+  hosts: localhost
+  roles:
+    - CICD-PIPELINE-ROLE
+
+- name: DEPLOY OPENSHIFT TASKS PROJECT
+  hosts: localhost
+  roles:
+    - DEPLOY-APPS-ROLE
+
+- name: APPLY MULTINANT PROJECT SETUP
+  hosts: masters,localhost
+  roles:
+    - MULTITENANT-ROLE
+
+- name: ON BOARD NEW USERS AND GROUPS
+  hosts: masters,localhost
+  roles:
+    - CREATE-PROJECTS-ROLE

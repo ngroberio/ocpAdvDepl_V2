@@ -1,0 +1,43 @@
+---
+
+- name: ADD LOCALHOST TO SEED HOSTS
+  add_host:
+    hostname: localhost
+    groups:
+      - seed-hosts
+    ansible_connection: local
+    ansible_host: localhost
+  when: "inventory_hostname == 'localhost'"
+
+- name: LOAD ALL THE INVENTORY INFORMATION TO THE SMOKE TEST
+  include_vars:
+    dir: vars
+    files_matching: seed-hosts.yml
+  when: "inventory_hostname == 'localhost'"
+
+- name: DEPLOY THE SMOKE TEST APPLICATION USING ANSIBLE APPLIER
+  import_role:
+    name: openshift-applier
+  when: "inventory_hostname == 'localhost'"
+
+- name: TEST SMOKE TEST URL
+  shell: echo http://$(sudo oc get route -n smoke-test | awk 'NR>1 {print $2}')
+  register: url
+
+- name: DEBUG SMOKE TEST URL STDOUT
+  debug:
+    msg: "{{ url.stdout }}"
+
+- name: "CHECK IF POD IS ALIVE"
+  uri:
+    url: "{{ url.stdout }}"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 120
+  delay: 2
+
+- name: SMOKE TEST SUCEEDED MESSAGE
+  debug:
+    msg: ">>>>>>> [ SMOKE TEST SUCCEEDED ] <<<<<<<<<"
+  when: result.status == 200

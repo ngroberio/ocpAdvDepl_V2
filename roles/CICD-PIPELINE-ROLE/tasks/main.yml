@@ -1,0 +1,43 @@
+---
+- name: ADD LOCALHOST TO THE SEED HOSTS
+  add_host:
+    hostname: localhost
+    groups:
+      - seed-hosts
+    ansible_connection: local
+    ansible_host: localhost
+  when: "inventory_hostname == 'localhost'"
+
+- name: PREPARE INVENTORY FOR JENKINS
+  include_vars:
+    dir: vars
+    files_matching: seed-hosts.yml
+  when: "inventory_hostname == 'localhost'"
+
+- name: DEPLOY JENKINS WITH APPLIER
+  import_role:
+    name: openshift-applier
+  when: "inventory_hostname == 'localhost'"
+
+- name: TEST CICD URL
+  shell: echo https://$(sudo oc get route -n cicd | awk 'NR>1 {print $2}')
+  register: url
+
+- name: DEBUG URL STDOUT
+  debug:
+    msg: " Jenkins URL: {{ url.stdout }}"
+
+- name: "POD READNESS PROBE"
+  uri:
+    url: "{{ url.stdout }}"
+    status_code: 403
+    validate_certs: no
+  register: result
+  until: result.status == 403
+  retries: 120
+  delay: 2
+
+- name: JENKINS DEPLOY SUCCEEDED MESSAGE
+  debug:
+    msg: "***JENKINS DEPLOYED***"
+  when: result.status == 403
