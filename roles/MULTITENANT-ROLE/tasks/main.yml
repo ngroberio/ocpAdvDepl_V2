@@ -20,7 +20,7 @@
 
 - name: Create project templates using applier
   import_role:
-    name: openshift-applier
+    name: OPNESHIFT-APPLIER
   when: "inventory_hostname == 'localhost'"
 
 - name: copy podnodeselector yaml

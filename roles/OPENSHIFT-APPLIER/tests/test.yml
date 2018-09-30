@@ -2,4 +2,4 @@
 
 - hosts: seed-hosts
   roles:
-    - openshift-applier
+    - OPNESHIFT-APPLIER
